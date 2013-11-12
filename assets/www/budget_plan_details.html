@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>PhoneGap WebOS</title>
+   	
+	<script type="text/javascript" src="cordova.js"></script>   
+	<script type="text/javascript"> 
+	 var db;
+	document.addEventListener("deviceready", onDeviceReady, false);
+	 function onDeviceReady() 
+	    { 
+	       var maxSize = 65536;
+	     db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize);
+	       db.transaction(successCB,errorCB);   
+	    }
+
+		// generic error handler
+		function errorCB(tx, err) {
+			navigator.notification.alert("Error: " + err);
+		}
+ 
+		// success handler for db creation & population
+		function successCB() {
+			//navigator.notification.alert('Tables Created'); 
+			db.transaction(queryDB, errorCB);
+
+		}
+                       
+		// query db for all values in the DEMO table
+		function queryDB(tx) {
+			tx.executeSql('SELECT * FROM budget_details', [], querySuccess, errorCB);
+		}
+               //  onload="createDB();"    
+               // display results of a success db query
+		function querySuccess(tx, results) {   
+		
+			var len = results.rows.length;
+		var outputid=document.getElementById("ids");
+		var outputdata=document.getElementById("data");
+			if (len > 0) {
+				for (var i=0;i<len;i++) {
+					outputid.innerHTML += "<td>"+ results.rows.item(i).b_type+"</td><hr>";
+					outputdata.innerHTML += "<td>"+ results.rows.item(i).amount+"</td><hr>";
+				
+				}
+			}
+		}
+			
+	</script>
+</head>
+<body>
+<h4>Budget Plan Details</h4>
+<center><table border="0" id="gridview">
+  <tr>
+    <td>Plan Type</td>
+    <td>Esti Amount</td>
+  </tr>
+  <tr>
+    <td id="ids"></td>
+    <td id="data"></td>
+  </tr>
+</table>
+</center>
+</body>
+</html>
+                                             

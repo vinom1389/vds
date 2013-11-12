@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="cordova.js"></script>   
+
+<script type="text/javascript"> 	
+	var db;	
+
+ 	function onLoad() {
+	    	navigator.device.deviceReady();
+	
+		} 
+		
+		// for basic type detail enttry
+ 	function createDB() {  
+ 			    
+ 			var maxSize = 65536;
+	       db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize);
+	       	db.transaction(populateDB, errorCB, successCB);   	
+		}
+		// for new type detail entry
+			function createDB1() {  
+			 var maxSize = 65536;
+	    db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize); 
+	       	db.transaction(populateDB1, errorCB, successCB);   	
+		}
+			// inserts test data into db
+		function populateDB(tx) {
+			
+			// insert test data into DEMO table
+			var e = document.getElementById("b_type");
+			var sl_type = e.options[e.selectedIndex].text;
+			var b_amount=document.getElementById("b_amount").value;
+		
+			tx.executeSql('INSERT INTO budget_details(b_type,amount) VALUES (?,?)',[sl_type,b_amount]);
+			
+		}
+		function populateDB1(tx) {
+	
+			// insert test data into DEMO table
+			var newtype1 = document.getElementById("newtype").value;
+			var new_amount=document.getElementById("newamount").value;
+		
+			tx.executeSql('delete from budget_details');
+			tx.executeSql('INSERT INTO budget_details(b_type,amount) VALUES (?,?)',[newtype1,new_amount]);
+			
+		}  
+			// generic error handler
+		function errorCB(tx, err) {
+			navigator.notification.alert("error: " + err);
+		}
+ 
+		// success handler for db creation & population
+		function successCB() {
+		navigator.notification.alert('Budget Plan Added' );
+		//db.transaction(queryDB, errorCB);
+		}
+		// success handler for db creation & population
+		function successCB1() {
+			navigator.notification.alert('Budget Plan Added' );
+			//db.transaction(queryDB, errorCB);
+		}
+		function plandetails()
+		{
+				window.location = "budget_plan_details.html"
+		}  
+		
+		function expanses()
+		{
+				window.location = "expanses.html"
+		}
+			// query db for all values in the DEMO table
+		function queryDB(tx) {
+			tx.executeSql('SELECT * FROM budget_details', [], querySuccess, errorCB);
+		}
+                 
+               // display results of a success db query
+		function querySuccess(tx, results) {   
+		
+			var len = results.rows.length;
+			//var outputid=document.getElementById("btype");
+			//var outputdata=document.getElementById("amt");
+			if (len > 0) {
+				for (var i=0;i<len;i++) {
+				
+					//outputid.innerHTML += "<td>"+ results.rows.item(i).s_name+"</td><hr>";
+					//outputdata.innerHTML += "<td>"+ results.rows.item(i).amount+"</td><hr>";
+				
+				}
+			}
+		} 			
+</script>
+</head>
+
+<body>
+<table width="269" border="0">
+  <tr>
+    <td width="90">Basic Type</td>
+    <td width="116">Esti Amount </td>
+    <td width="49">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>
+	<select id="b_type">
+	<option value="Home">Home</option>
+	<option value="Utilities">Utilities</option>
+	<option value="Personal">Personal</option>
+	<option value="Food">Food</option>
+	<option value="Car">Car</option>	
+	</select>	</td>
+    <td><input type="text" id="b_amount" placeholder="Amount" size="12" /></td>
+    <td><input type="button" onclick="createDB();"  value="Add" /></td>
+  </tr>
+   <tr>
+    <td colspan="3">Add New Type</td>
+  </tr>
+  <tr>
+    <td><input type="text" id="newtype" placeholder="New Type" size="10" /></td>
+    <td><input type="text" id="newamount" placeholder="Amount" size="12" /></td>
+    <td><input type="button" onclick="createDB1();" value="Add" /></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" align="center"><input type="button" onclick="plandetails();" value="View Plan Details" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" onclick="expanses();" value="Expanses" /></td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<html>
+<head>
+<title></title>
+<script type="text/javascript" src="cordova.js"></script>   
+<LINK href="CSS/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript"> 	
+	var db;	
+ 	function onLoad() {
+	    	navigator.device.deviceReady();
+		} 
+ 	function createDB() {  
+			 var maxSize = 65536;
+	   db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize);
+	         		db.transaction(populateDB, errorCB, successCB);
+		}
+			// inserts test data into db
+		function populateDB(tx) {
+			
+			// insert test data into DEMO table
+			
+			var name=document.getElementById("txtName").value;
+			var dob=document.getElementById("txtDob").value;
+			var age=document.getElementById("txtAge").value;
+			var address=document.getElementById("txtAddress").value;
+			var phone=document.getElementById("txtPhoneNo").value;
+			var email=document.getElementById("txtEmail").value;
+			var username=document.getElementById("txtUserName").value;
+			var pwd=document.getElementById("txtPassword").value;
+			//tx.executeSql('delete from personal_details');
+			tx.executeSql('INSERT INTO personal_details(Name,DOB,Age,Address,PhoneNo,Email,UserName,Password) VALUES (?,?,?,?,?,?,?,?)',[name,dob,age,address,phone,email,username,pwd]);
+			//tx.executeSql('INSERT INTO budget_details(Name) VALUES (?)',[name]);
+			db.transaction(successCB, errorCB);
+		} 
+			// generic error handler
+		function errorCB(tx, err) {
+			navigator.notification.alert("error: " + err);
+		}
+ 
+		// success handler for db creation & population
+		function successCB() {
+			document.cookie=document.getElementById("txtName").value;
+			db.transaction(queryDB, errorCB);
+		}
+		// query db for all values in the DEMO table
+		function queryDB(tx) {
+		
+			tx.executeSql('SELECT * FROM personal_details', [], querySuccess, errorCB);
+		}
+		
+		// display results of a success db query
+		function querySuccess(tx, results) {     
+		//navigator.notification.alert('Successfully Registered.!');
+			var len = results.rows.length;
+				// display each item in the recordset in its own alert
+			if (len > 0) {
+				for (var i=0;i<len;i++) {
+					//navigator.notification.alert('Welcome User: ' + results.rows.item(i).UserName  );
+					
+					var uname1 = sessionStorage.getItem("uname");
+					localStorage.setItem("ssval","vinoth");
+						window.location = "Budget_Plan.html"
+					
+				}
+			}
+		}		   			
+</script>
+</head>
+<body>
+<center><h3>Registration</h3>
+<table width="150">
+  <tr>
+    <td><input class="textbox" id="txtName" type="text" placeholder="Name"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtDob" type="text" placeholder="DOB"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtAge" type="text" placeholder="Age"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtAddress" type="text" placeholder="Address"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtPhoneNo" type="text" placeholder="PhoneNo"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtEmail" type="text" placeholder="Email"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtUserName" type="text" placeholder="UserName"></td>
+  </tr>
+  <tr>
+    <td><input class="textbox" id="txtPassword" type="text" placeholder="Password"></td>
+  </tr>
+  <tr>
+    <td align="center"><input type="button" class="button_example" onclick="createDB();" width="100" value="REGISTER" /></td>
+  </tr>
+</table>
+</center>
+</body>
+</html>

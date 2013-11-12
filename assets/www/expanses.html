@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="cordova.js"></script>
+
+<script type="text/javascript"> 	
+	 var db;
+	 document.addEventListener("deviceready", onDeviceReady, false);
+	 function onDeviceReady() 
+	    { 
+	     var maxSize = 65536;
+	        db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize);
+	        db.transaction(successCB,errorCB);   
+	    }
+	    // inserts test data into db
+		function populateDB(tx) {
+		//tx.executeSql('SELECT sum(expanses) as expanses_amt FROM budget_details', [], querySuccess2, errorCB);
+		db.transaction(queryDB1,errorCB); 
+		} 
+ 
+		// generic error handler
+		function errorCB(tx, err) {
+			navigator.notification.alert("Error: " + err);
+		}
+ 
+		// success handler for db creation & population
+		function successCB() {
+			db.transaction(queryDB, errorCB);
+
+		}
+		// query db for all values in the DEMO table
+		function queryDB(tx) {
+			tx.executeSql('SELECT sum(amount) as totalamount FROM budget_details', [], querySuccess, errorCB);
+			tx.executeSql('SELECT b_type FROM budget_details', [], querySuccess1, errorCB);
+			//tx.executeSql('SELECT sum(expanses) as expanses_amt FROM budget_details', [], querySuccess2, errorCB);
+		}
+		function queryDB1(tx) {
+			
+			tx.executeSql('SELECT sum(expanses) as expanses_amt FROM budget_details', [], querySuccess2, errorCB);
+		}
+		// for getting the date..
+		Date.prototype.defaultView=function()
+		{
+			var dd=this.getDate();
+			if(dd<10)dd='0'+dd;
+			var mm=this.getMonth()+1;
+			if(mm<10)mm='0'+mm;
+			var yyyy=this.getFullYear();
+			return String(mm+"\/"+dd+"\/"+yyyy)
+		}
+		var today = new Date();
+
+		// display results of a success db query
+		function querySuccess(tx, results) {     
+		var outputmdg=document.getElementById("mbdg");
+		var outputtdate=document.getElementById("tdate");
+		var len = results.rows.length;
+			// display each item in the recordset in its own alert
+				var dropdown = document.getElementById("MyDropDownList");
+				var opt;
+				outputtdate.innerHTML += "<td>"+today.defaultView() +"</td>";
+				if (len > 0) {
+				for (var i=0;i<len;i++) {
+					opt = document.createElement("option"); 
+					outputmdg.innerHTML += "<td>"+ results.rows.item(i).totalamount+"</td>";
+					//navigator.notification.alert('tpe: ' + results.rows.item(i).b_type  );
+					 // opt.text =''+results.rows.item(i).b_type;
+      				  //opt.value =''+results.rows.item(i).b_type;
+      				  	//opt.text =''+results.rows.item(i).type1;
+						//opt.value =''+results.rows.item(i).type1;
+						//dropdown.options.add(opt);
+				
+				}
+			}
+		}	
+		// display results of a success db query
+		function querySuccess1(tx, results) {     
+		var outputmdg=document.getElementById("mbdg");
+		var outputtdate=document.getElementById("tdate");
+		var len = results.rows.length;
+			// display each item in the recordset in its own alert
+				var dropdown = document.getElementById("MyDropDownList");
+				var opt;
+				//outputtdate.innerHTML += "<td>"+today.defaultView() +"</td>";
+				if (len > 0) {
+				for (var i=0;i<len;i++) {
+					opt = document.createElement("option"); 
+					
+      				
+      				  	opt.text =''+results.rows.item(i).b_type;
+						opt.value =''+results.rows.item(i).b_type1;
+						dropdown.options.add(opt);
+				
+				}
+			}
+		}		 
+		
+		
+				function querySuccess2(tx, results) {     
+				var outputs_exp=document.getElementById("sfexp");
+				var len = results.rows.length;
+				// display each item in the recordset in its own alert
+			
+				if (len > 0) {
+				for (var i=0;i<len;i++) {
+						outputs_exp.innerHTML += "<td>"+ results.rows.item(i).expanses_amt+"</td>";
+				}
+			}
+		}
+	 	
+	
+</script>
+</head>
+
+<body>
+<table width="269" border="0">
+  <tr>
+    <td width="123">Name</td>
+    <td width="10">:</td>
+    <td width="122" id="uname"></td>
+  </tr>
+  <tr>
+    <td>This Month Budget </td>
+    <td>:</td>
+    <td id="mbdg"></td>
+  </tr>
+  <tr>
+    <td>So for Expanses </td>
+    <td>:</td>
+    <td id="sfexp"></td>
+  </tr>
+  <tr>
+    <td>Date</td>
+    <td>:</td>
+    <td id="tdate"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<br>
+<h4>Expanses Details</h4>
+<table width="200" border="0">
+  <tr>
+    <td>Type</td>
+    <td>Amount</td>
+  </tr>
+  <tr>
+    <td>
+	<select id="MyDropDownList">
+	</select>
+	</td>
+    <td><input type="text" id="examount"></td>
+  </tr>
+  <tr>
+   <td colspan="2"><input type="button" onclick="populateDB();" value="Save"></td>
+  </tr>
+</table>
+</body>
+</html>

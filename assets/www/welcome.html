@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PhoneGap WebOS</title>
+<script type="text/javascript" src="cordova.js"></script>   
+	<script type="text/javascript"> 	
+	 var db;
+	document.addEventListener("deviceready", onDeviceReady, false);
+	 function onDeviceReady() 
+	    { 
+	         	
+	         	var sscal = localStorage.getItem("ssval");
+	         	alert("Session Name: "+sscal);
+	         	if(sscal != null)
+	         	{	
+	         		
+	         		var maxSize = 65536;
+	         	  	db = window.openDatabase("MMB10", "1.0", "monthly mini budget7", maxSize);
+	         		db.transaction(populateDB, errorCB, successCB);
+	     		}
+	     		else
+	     		{
+	     			window.location = "Registration.html"
+	     		}
+	       	  
+	    }
+
+		// inserts test data into db
+		function populateDB(tx) {
+			// drop the DEMO table if it exists
+			tx.executeSql('DROP TABLE IF EXISTS personal_details');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS personal_details(Name text,DOB text,Age integer,Address text,PhoneNo text,Email text,UserName text, Password text)');
+			tx.executeSql('DROP TABLE IF EXISTS family_details');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS family_details(Members integer,Adult integer,Child integer,Infant integer)');  
+			tx.executeSql('DROP TABLE IF EXISTS working_details');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS working_details(Company_Name text,Designation text,DOJ text,Monthly_Income integer,Other_Income integer)');
+			tx.executeSql('DROP TABLE IF EXISTS budget_details');      
+			tx.executeSql('CREATE TABLE IF NOT EXISTS budget_details(b_type text,amount integer,expanses integer)');
+			tx.executeSql('DROP TABLE IF EXISTS demo'); 
+			tx.executeSql('CREATE TABLE IF NOT EXISTS demo(id unique, data)'); 
+			tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
+		} 
+ 
+		// generic error handler
+		function errorCB(tx, err) {
+			navigator.notification.alert("Error: " + err);
+		}
+ 
+		// success handler for db creation & population
+		function successCB() {
+			//navigator.notification.alert("Tables Created ");
+				window.location = "Budget_Plan.html"
+
+		}
+ 		 
+	</script>
+</head>
+<body>
+<h2>welcome</h2> 
+</body>
+</html>
+           
